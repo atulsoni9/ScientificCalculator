@@ -1,0 +1,19 @@
+<html ng-app="CalculatorApp">
+<head>
+    <title>Go-Angular Calculator</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+</head>
+<body ng-controller="CalcController">
+    <h2>Scientific Calculator</h2>
+    <input type="number" ng-model="val" placeholder="Enter number">
+    <input type="number" ng-model="pow" placeholder="Enter power (for x^b)">
+    <br><br>
+    <button ng-click="doCalc('sqrt')">√x</button>
+    <button ng-click="doCalc('factorial')">x!</button>
+    <button ng-click="doCalc('ln')">ln(x)</button>
+    <button ng-click="doCalc('power')">x^b</button>
+    <hr>
+    <h3>Result: {{ result }}</h3>
+    <script src="app.js"></script>
+</body>
+</html>
