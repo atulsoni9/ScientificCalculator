@@ -93,9 +93,23 @@ pipeline {
             steps {
                 script {
                     try {
-                        echo 'Deploying via Ansible using WSL...'
-                        bat 'wsl ansible-playbook -i inventory.ini deploy.yml'
-                    } catch (Exception e) {
+                // Using powershell (pwsh) to manage Docker directly
+                powershell '''
+                    # 1. Prune old images (Resource Pruning)
+                    docker image prune -f
+
+                    # 2. Pull the latest image
+                    docker pull atulsoni9/scientificcalc:latest
+
+                    # 3. Clean up any existing container
+                    $container = docker ps -aq -f name=scientific-calc-cli
+                    if ($container) { 
+                        docker rm -f scientific-calc-cli 
+                    }
+
+                    Write-Host "Deployment Successful! Ready to run."
+                '''
+            } catch (Exception e) {
                         currentBuild.description = 'Failed Stage: Deploy'
                         throw e
                     }
@@ -105,8 +119,15 @@ pipeline {
     }
 
     post {
-        always {
-            cleanWs()
+		success {
+            mail to: 'atul9soni@gmail.com',
+                 subject: "SUCCESS: Build #${env.BUILD_ID}",
+                 body: "The Scientific Calculator build passed. View it here: ${env.BUILD_URL}"
+        }
+        failure {
+            mail to: 'atul9soni@gmail.com',
+                 subject: "FAILURE: Build #${env.BUILD_ID}",
+                 body: "The build failed. Check the console: ${env.BUILD_URL}console"
         }
     }
 }

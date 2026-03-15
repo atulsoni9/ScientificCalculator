@@ -1,0 +1,18 @@
+---
+- name: Deploy Go Scientific Calculator
+  hosts: all
+  become: false  # Usually not needed for local Docker if user is in docker group
+
+  tasks:
+    - name: Prune old images to save space (Resource Pruning)
+      shell: "docker image prune -f"
+
+    - name: Pull the latest Scientific Calc image
+      community.docker.docker_image:
+        name: atulsoni9/scientificcalc:latest
+        source: pull
+        force_source: yes
+
+    - name: Ensure the app is ready to run
+      debug:
+        msg: "Deployment Successful! Run with: docker run -it --rm atulsoni9/scientificcalc"
